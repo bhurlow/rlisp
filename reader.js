@@ -1,5 +1,12 @@
-const R = require('ramda')
 
+/*
+ * reads strings into nested data structures
+ * defers to native data structs where possible, 
+ * e.g. list === Array, string === String 
+ * implementation models Clojure EDN Reader 
+ */ 
+
+const R = require('ramda')
 const { isWhitespace, isDigit } = require('./type')
 
 function readList(chars, c) {
@@ -45,25 +52,30 @@ function readDelimitedList(delim, chars, recurse) {
   return a
 }
 
-// sub readers
+// subtype readers
 
-function readNumber(ch) {
-  // in java, this would expand to other
-  // number types
-  return parseInt(ch)
+function isTerminator(ch) {
+  return ch === ')' || matches[ch]
 }
 
 function readToken(chars, ch) {
   let token = ch
   while (true) {
     let ch = chars.shift()
-    if (!ch || isWhitespace(ch) || matches[ch]) {
+    if (!ch || isWhitespace(ch) || isTerminator(ch)) {
       chars.unshift(ch)
       return token
     }
     token += ch
   }
   return token
+}
+
+function readNumber(chars, ch) {
+  // in java, this would expand to other
+  // number types
+  let token = readToken(chars, ch)
+  return parseInt(token)
 }
 
 function read(chars) {
@@ -80,7 +92,7 @@ function read(chars) {
     }
 
     if (isDigit(ch)) {
-      return readNumber(ch)
+      return readNumber(chars, ch)
     }
 
     // if the data type has a dispatch char

@@ -3,7 +3,8 @@ function isWhitespace(ch) {
 }
 
 function isDigit(ch) {
-  // a regex might be preferable
+  // TODO
+  // replace with regex test
   return Boolean(parseInt(ch))
 }
 

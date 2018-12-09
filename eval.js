@@ -1,3 +1,10 @@
+
+/*
+ * evaluates forms read by reader
+ * if Sexp (Array), apply operand 
+ * to rest of sexp recursively
+ */
+
 const R = require('ramda')
 const { readString } = require('./reader')
 const { isArray, isNumber } = require('./type')
@@ -42,7 +49,11 @@ function evalForm(form) {
   }
 }
 
-const example = '(- (- 6 6) 6)'
-let res = readString(example)
-let evalRes = evalForm(res)
-console.log(evalRes)
+module.exports = {
+  evalForm
+}
+
+// const example = '(- (- 6 6) 6)'
+// let res = readString(example)
+// let evalRes = evalForm(res)
+// console.log(evalRes)
