@@ -6,7 +6,14 @@
 
 const R = require('ramda')
 const { readString } = require('./reader')
-const { isNumber, isList, getType } = require('./type')
+
+const { 
+  isNumber, 
+  isList, 
+  getType,
+  isQuoted,
+} = require('./type')
+
 const { List } = require('./immutable.js')
 
 // native function implementations
@@ -42,16 +49,37 @@ function nativeEquals(...args) {
   return a.equals(b)
 }
 
+// TODO assert listlike
+function nativeFirst(data) {
+  return data.first()
+}
+
+// TODO assert listlike
+function nativeRest(data) {
+  return data.shift()
+}
+
 const tokenToNative = {
   '+': nativeAdd,
   '-': nativeSubtract,
-  '=': nativeEquals
+  '=': nativeEquals,
+  'first': nativeFirst,
+  'rest': nativeRest
+}
+
+function unquote(data) {
+  if (isQuoted(data)) {
+    return data.get(1)
+  }
+  return data
 }
 
 function evalSexp(list) {
   let operand = list.first()
 
-  let args = list.shift().map(evalForm)
+  let rest = list.shift()
+
+  let args = rest.map(evalForm)
 
   let nativeFn = tokenToNative[operand]
 
@@ -64,6 +92,10 @@ function evalSexp(list) {
 }
 
 function evalForm(form) {
+  // form = unquote(form)
+  if (isQuoted(form)) {
+    return unquote(form)
+  }
   if (isList(form)) {
     return evalSexp(form)
   }
@@ -75,8 +107,3 @@ function evalForm(form) {
 module.exports = {
   evalForm
 }
-
-// const example = '(- (- 6 6) 6)'
-// let res = readString(example)
-// let evalRes = evalForm(res)
-// console.log(evalRes)

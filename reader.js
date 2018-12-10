@@ -108,6 +108,11 @@ function read(chars) {
       return readNumber(chars, ch)
     }
 
+    if (`'` === ch) {
+      let quoted = new List(['QUOTE', read(chars) ])
+      return quoted
+    }
+
     // if the data type has a dispatch char
     // read to satisfy the type
     let matchFn = matches[ch]

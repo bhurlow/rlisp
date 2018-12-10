@@ -26,6 +26,10 @@ function isList(data) {
   return List.isList(data)
 }
 
+function isQuoted(data) {
+  return isList(data) && data.first() === 'QUOTE'
+}
+
 function getType(data) {
   if (isNumber(data)) return 'Number'
   if (isList(data)) return 'List'
@@ -39,5 +43,6 @@ module.exports = {
   isArray,
   isNumber,
   isList,
+  isQuoted,
   getType
 }
