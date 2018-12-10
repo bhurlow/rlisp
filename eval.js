@@ -1,4 +1,3 @@
-
 /*
  * evaluates forms read by reader
  * if Sexp (Array), apply operand 
@@ -8,6 +7,7 @@
 const R = require('ramda')
 const { readString } = require('./reader')
 const { isArray, isNumber } = require('./type')
+const { List } = require('./immutable.js')
 
 function nativeAdd(...args) {
   return R.sum(args)
@@ -22,28 +22,25 @@ const tokenToNative = {
   '-': nativeSubtract
 }
 
-function evalSexp(form) {
-  let operand = R.head(form)
+function evalSexp(list) {
+  let operand = list.first()
 
-  let evalAll = R.map(evalForm)
-
-  let args = evalAll(R.tail(form))
+  let args = list.shift().map(evalForm)
 
   let nativeFn = tokenToNative[operand]
 
-  let ret = nativeFn(...args)
-
   // TODO
   // lookup fns in env
+
+  let ret = nativeFn(...args)
 
   return ret
 }
 
 function evalForm(form) {
-  if (isArray(form)) {
+  if (List.isList(form)) {
     return evalSexp(form)
   }
-
   if (isNumber(form)) {
     return form
   }

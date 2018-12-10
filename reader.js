@@ -1,17 +1,19 @@
 
 /*
  * reads strings into nested data structures
- * defers to native data structs where possible, 
- * e.g. list === Array, string === String 
+ * maps to immutable.js types
  * implementation models Clojure EDN Reader 
  */ 
 
 const R = require('ramda')
 const { isWhitespace, isDigit } = require('./type')
+const {
+  List
+} = require('./immutable.js')
 
 function readList(chars, c) {
   let items = readDelimitedList(')', chars)
-  return items
+  return new List(items)
 }
 
 const matches = {
