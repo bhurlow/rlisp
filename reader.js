@@ -1,15 +1,12 @@
-
 /*
  * reads strings into nested data structures
  * maps to immutable.js types
  * implementation models Clojure EDN Reader 
- */ 
+ */
 
 const R = require('ramda')
 const { isWhitespace, isDigit } = require('./type')
-const {
-  List
-} = require('./immutable.js')
+const { List } = require('./immutable.js')
 
 function readList(chars, c) {
   let items = readDelimitedList(')', chars)
@@ -80,6 +77,20 @@ function readNumber(chars, ch) {
   return parseInt(token)
 }
 
+function interpretToken(token) {
+
+  // read bool literals
+  if (token === 'true') {
+    return true
+  }
+
+  if (token === 'false') {
+    return false
+  }
+
+  return token
+}
+
 function read(chars) {
   while (true) {
     let ch = chars.shift()
@@ -107,7 +118,7 @@ function read(chars) {
 
     // otherwise, interpret the symbol
     let token = readToken(chars, ch)
-    return token
+    return interpretToken(token)
   }
 }
 
