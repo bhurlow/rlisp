@@ -1,0 +1,67 @@
+
+~ rlisp ~
+
+todo:
+
+- print
+
+- eval env (let, def) 
+
+- CLI to invoke a file
+
+- builtins:
+  - lambda / fn
+  - def
+  - list
+  - head
+  - tail
+  - eval 
+  - join 
+  - +,-,/.* 
+  - if 
+  - =
+  - not
+  - >,<,>=,<=
+  - load
+
+- ideas:
+
+  - something like transducers but more sane
+  - associative data type?
+  - auto reloading of src files from repl?
+  - CLI?
+  - docstrings?
+  - immutable js 
+  - async/promises built in?
+  - js interop?
+
+- projects:
+
+  - a simple inteface for streams
+      - take advantage of async/io, with a functional style 
+      - replace the event emitter pattern of .on()
+      - abstractions for common stream patterns:
+          - map a function across each value
+          - when to apply backpressure 
+          - limit to a rate 
+          - reduce (transducer) which can collect values and emit 
+          - ^ materialized view
+          - storing/caching of the (immutable) stream to spead up rereads
+            - if an application restarts, it would only need to read from last saved value
+          - chain stream modifiers (->, .pipe())
+          - compat with existing streams (or wrap interfaces) 
+
+  - passing lisp code over the wire with a duplex connection
+    - syncing RPC 
+    - deploy production code (heroku log talk)
+    - 0 downtime deployments?
+    - expose over HTTP?
+
+  - duplex stream capabilities (functional?) would enable applications such as:
+      - CRDTs
+      - terminal emulation 
+      - evented systems 
+
+            
+
+
