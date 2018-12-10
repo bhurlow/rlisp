@@ -6,8 +6,10 @@
 
 const R = require('ramda')
 const { readString } = require('./reader')
-const { isArray, isNumber } = require('./type')
+const { isNumber, isList, getType } = require('./type')
 const { List } = require('./immutable.js')
+
+// native function implementations
 
 function nativeAdd(...args) {
   return R.sum(args)
@@ -17,9 +19,33 @@ function nativeSubtract(...args) {
   return args.reduce(R.subtract)
 }
 
+function nativeEquals(...args) {
+  if (args.length > 2) {
+    throw new Error('comparison arity > 2 not implemented')
+  }
+
+  let [a, b] = args
+
+  let aType = getType(a)
+  let bType = getType(b)
+
+  if (aType != bType) {
+    throw new Error('cant compare distinct types')
+  }
+
+  // native types can use native compare
+  if ('Number' === aType || 'Boolean' === aType) {
+    return a === b
+  }
+
+  // otherwise defer to type equality method
+  return a.equals(b)
+}
+
 const tokenToNative = {
   '+': nativeAdd,
-  '-': nativeSubtract
+  '-': nativeSubtract,
+  '=': nativeEquals
 }
 
 function evalSexp(list) {
@@ -38,7 +64,7 @@ function evalSexp(list) {
 }
 
 function evalForm(form) {
-  if (List.isList(form)) {
+  if (isList(form)) {
     return evalSexp(form)
   }
   if (isNumber(form)) {
