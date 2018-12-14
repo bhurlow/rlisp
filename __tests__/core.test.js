@@ -42,3 +42,16 @@ test('rest', async () => {
   expect(res).toEqual(new List([10,11]))
 
 })
+
+test('lambda', async () => {
+
+  const input = `
+    ((fn '(x) (+ x 5)) 5)
+  `
+
+  let form = readString(input)
+  let res = evalForm(form)
+
+  expect(res).toEqual(10)
+
+})

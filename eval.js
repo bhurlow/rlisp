@@ -68,6 +68,9 @@ function putln(...args) {
   process.stdout.write(...strs)
 }
 
+function fn(...args) {
+}
+
 const tokenToNative = {
   '+': nativeAdd,
   '-': nativeSubtract,
@@ -76,6 +79,7 @@ const tokenToNative = {
   'first': nativeFirst,
   'rest': nativeRest,
   'putln': putln,
+  'fn': fn
 }
 
 function unquote(data) {
@@ -86,24 +90,37 @@ function unquote(data) {
 }
 
 function evalSexp(list) {
+
   let operand = list.first()
-
   let rest = list.shift()
-
   let args = rest.map(evalForm)
 
-  let nativeFn = tokenToNative[operand]
+  if (!isList(operand)) {
 
-  if (!nativeFn) {
-    throw new Error(`Unknown Operator: ${operand}`)
+    let nativeFn = tokenToNative[operand]
+
+    if (!nativeFn) {
+      throw new Error(`Unknown Operator: ${operand}`)
+    }
+
+    let ret = nativeFn(...args)
+    return ret
+
   }
 
-  // TODO
-  // lookup fns in env
-
-  let ret = nativeFn(...args)
-
-  return ret
+  if (isList(operand)) {
+    if ('fn' === operand.get(0)) {
+      let fnList = operand
+      let argSpec = evalForm(operand.get(1))
+      // here we map the binding vars in argspec
+      // to their inputs
+      console.log('argSpec', argSpec)
+    }
+    // console.log('operand is list')
+    // console.log(operand.get(0))
+    // console.log('eval operand')
+    // operand = evalSexp(operand)
+  }
 }
 
 function evalForm(form) {
