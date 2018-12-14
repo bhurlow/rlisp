@@ -46,12 +46,12 @@ test('rest', async () => {
 test('lambda', async () => {
 
   const input = `
-    ((fn '(x) (+ x 5)) 5)
+    ((fn '(x) (+ x 5)) 6)
   `
 
   let form = readString(input)
   let res = evalForm(form)
 
-  expect(res).toEqual(10)
+  expect(res).toEqual(11)
 
 })

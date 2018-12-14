@@ -30,19 +30,25 @@ function isQuoted(data) {
   return isList(data) && data.first() === 'QUOTE'
 }
 
+function isString(data) {
+  return typeof data === 'string'
+}
+
 function getType(data) {
   if (isNumber(data)) return 'Number'
   if (isList(data)) return 'List'
   if (isBool(data)) return 'Boolean'
+  if (isString(data)) return 'String'
   else return 'N/A'
 }
 
 module.exports = {
-  isWhitespace,
-  isDigit,
+  getType,
   isArray,
-  isNumber,
+  isDigit,
   isList,
+  isNumber,
   isQuoted,
-  getType
+  isString,
+  isWhitespace
 }

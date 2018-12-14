@@ -34,6 +34,7 @@ todo:
   - immutable js 
   - async/promises built in?
   - js interop?
+  - deps from anywhere (github, http) stored exactly once
 
 - projects:
 
