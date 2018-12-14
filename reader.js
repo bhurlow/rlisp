@@ -128,7 +128,7 @@ function read(chars) {
 }
 
 function readString(input) {
-  let chars = input.split('')
+  let chars = input.trim().split('')
   return read(chars)
 }
 

@@ -26,6 +26,10 @@ function nativeSubtract(...args) {
   return args.reduce(R.subtract)
 }
 
+function nativeMult(...args) {
+  return args.reduce(R.multiply)
+}
+
 function nativeEquals(...args) {
   if (args.length > 2) {
     throw new Error('comparison arity > 2 not implemented')
@@ -59,12 +63,19 @@ function nativeRest(data) {
   return data.shift()
 }
 
+function putln(...args) {
+  const strs = args.map(String)
+  process.stdout.write(...strs)
+}
+
 const tokenToNative = {
   '+': nativeAdd,
   '-': nativeSubtract,
   '=': nativeEquals,
+  '*': nativeMult,
   'first': nativeFirst,
-  'rest': nativeRest
+  'rest': nativeRest,
+  'putln': putln,
 }
 
 function unquote(data) {
@@ -83,6 +94,10 @@ function evalSexp(list) {
 
   let nativeFn = tokenToNative[operand]
 
+  if (!nativeFn) {
+    throw new Error(`Unknown Operator: ${operand}`)
+  }
+
   // TODO
   // lookup fns in env
 
@@ -92,7 +107,6 @@ function evalSexp(list) {
 }
 
 function evalForm(form) {
-  // form = unquote(form)
   if (isQuoted(form)) {
     return unquote(form)
   }
