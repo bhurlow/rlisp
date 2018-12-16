@@ -10,6 +10,10 @@ class Numeric {
     return '*print_number*'
   }
 
+  toString() {
+    return String(this.number)
+  }
+
   equals(comp) {
     this.number === comp
   }

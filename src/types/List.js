@@ -7,7 +7,7 @@ List.prototype.pr = function() {
 List.prototype._type = 'List'
 
 List.prototype.toString = function() {
-  return 'LIST()'
+  return `(${ this.map(item => item.toString()).join(' ') } )`
 }
 
 module.exports = List

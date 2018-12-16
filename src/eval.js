@@ -89,7 +89,7 @@ const tokenToNative = {
   first: nativeFirst,
   rest: nativeRest,
   putln: putln,
-  def
+  def,
 }
 
 function unquote(env, data) {
@@ -100,30 +100,37 @@ function unquote(env, data) {
 }
 
 function evalSexp(env, list) {
-  let operand = list.first()
-  let _type = operand._type
 
+  let operator = list.first()
+  let _type = operator._type
   let rest = list.shift()
-  let args = rest.map(x => _evalForm(env, x).data)
 
   if ('Symbol' === _type) {
-    let found = env.get(operand.id)
+
+    let args = rest.map(x => {
+      let sub = _evalForm(env, x)
+      return sub.data
+    })
+
+    let found = env.get(operator.id)
 
     if (!found) {
-      throw new Error(`Unknown Operator: ${operand}`)
+      throw new Error(`Unknown Operator: ${operator}`)
     }
 
     return found(env, ...args)
   }
 
-  if (isList(operand)) {
-    // TODO
-    // move this out of evalSexp into handler for 'fn' token
-    if ('fn' === operand.get(0)) {
-      // separate out the fns pargs
-      let fnList = operand
-      let fnArgs = operand.get(1)
-      let fnBody = operand.get(2)
+  if ('List' === _type) {
+
+    // we have to handle lambdas differently, since we cannot
+    // evaluate the arguments in advance b/c they have lexical
+    // closures 
+    if ('fn' === operator.first().id) {
+
+      let fnList = operator
+      let fnArgs = fnList.get(1)
+      let fnBody = fnList.get(2)
 
       // evaluate the arg spec, in case we want
       // to dynamically create args
@@ -139,19 +146,20 @@ function evalSexp(env, list) {
       argSpec.forEach((arg, idx) => {
         let bindVar = arg
         let bindVal = rest.get(idx)
-        bindingEnv = bindingEnv.set(bindVar, bindVal)
+        bindingEnv = bindingEnv.set(bindVar.id, bindVal)
       })
 
       // TODO
-      // implicit block here
+      // implicit block here,
+      // need to evaluate all rest of fnBody, not just single form
       let { data } = _evalForm(bindingEnv, fnBody)
 
-      // here we map the binding vars in argspec
-      // to their inputs applied, then eval the
-      // function body inside that env
       return { env, data }
+
     }
+
   }
+
 }
 
 function initEnv() {
@@ -164,8 +172,6 @@ function initEnv() {
 
 function _evalForm(env, form) {
   let _type = form._type
-
-  console.log('eval form', form)
 
   if (isQuoted(form)) {
     return unquote(env, form)

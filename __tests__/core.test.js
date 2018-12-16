@@ -45,7 +45,7 @@ test('lambda', async () => {
   let form = readString(input)
   let res = evalForm(form)
 
-  expect(res).toEqual(11)
+  expect(res.number).toEqual(11)
 })
 
 test('def', async () => {

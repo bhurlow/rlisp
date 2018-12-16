@@ -11,7 +11,7 @@ class Symbolic {
   }
 
   toString() {
-    return 'SYMBOL()'
+    return this.id
   }
 
   equals(comp) {
