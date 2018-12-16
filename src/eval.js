@@ -9,7 +9,10 @@ const { readString } = require('./reader')
 
 const { isNumber, isList, getType, isQuoted, isString } = require('./type')
 
-const { List, Map } = require('./immutable.js')
+const { Map } = require('./immutable.js')
+
+// our data types
+const { List, Numeric } = require('./types')
 
 function withEnv(env, data) {
   return { env, data }
@@ -18,15 +21,18 @@ function withEnv(env, data) {
 // native function implementations
 
 function nativeAdd(env, ...args) {
-  return withEnv(env, R.sum(args))
+  let res = R.sum(args.map(x => x.number))
+  return withEnv(env, new Numeric(res))
 }
 
 function nativeSubtract(env, ...args) {
-  return withEnv(env, args.reduce(R.subtract))
+  let res = args.map(x => x.number).reduce(R.subtract)
+  return withEnv(env, new Numeric(res))
 }
 
 function nativeMult(env, ...args) {
-  return withEnv(env, args.reduce(R.multiply))
+  let res = args.map(x => x.number).reduce(R.multiply)
+  return withEnv(env, new Numeric(res))
 }
 
 function nativeEquals(env, ...args) {
@@ -70,8 +76,8 @@ function putln(env, ...args) {
 }
 
 function def(env, ...args) {
-  let [varName, value] = args 
-  let newEnv = env.set(varName, value)
+  let [sym, value] = args
+  let newEnv = env.set(sym.id, value)
   return withEnv(newEnv, true)
 }
 
@@ -95,11 +101,13 @@ function unquote(env, data) {
 
 function evalSexp(env, list) {
   let operand = list.first()
+  let _type = operand._type
+
   let rest = list.shift()
   let args = rest.map(x => _evalForm(env, x).data)
 
-  if (!isList(operand)) {
-    let found = env.get(operand)
+  if ('Symbol' === _type) {
+    let found = env.get(operand.id)
 
     if (!found) {
       throw new Error(`Unknown Operator: ${operand}`)
@@ -155,17 +163,21 @@ function initEnv() {
 }
 
 function _evalForm(env, form) {
+  let _type = form._type
+
+  console.log('eval form', form)
+
   if (isQuoted(form)) {
     return unquote(env, form)
   }
-  if (isList(form)) {
+  if ('List' === _type) {
     return evalSexp(env, form)
   }
-  if (isNumber(form)) {
+  if ('Number' === _type) {
     return withEnv(env, form)
   }
-  if (isString(form)) {
-    let lookup = env.get(form)
+  if ('Symbol' === _type) {
+    let lookup = env.get(form.id)
     return withEnv(env, lookup)
   }
 }

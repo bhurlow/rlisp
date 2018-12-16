@@ -1,6 +1,7 @@
-const { readString, readAll } = require('../reader')
-const { evalForm, evalForms } = require('../eval')
-const { List } = require('../immutable.js')
+const { readString, readAll } = require('../src/reader')
+const { evalForm, evalForms } = require('../src/eval')
+
+const { List, Numeric, Symbolic } = require('../src/types')
 
 test('basic math eval', async () => {
   const input = `
@@ -10,7 +11,7 @@ test('basic math eval', async () => {
   let form = readString(input)
   let res = evalForm(form)
 
-  expect(res).toBe(75)
+  expect(res.number).toBe(75)
 })
 
 test('first', async () => {
@@ -21,7 +22,7 @@ test('first', async () => {
   let form = readString(input)
   let res = evalForm(form)
 
-  expect(res).toBe(5)
+  expect(res.number).toBe(5)
 })
 
 test('rest', async () => {
@@ -32,7 +33,8 @@ test('rest', async () => {
   let form = readString(input)
   let res = evalForm(form)
 
-  expect(res).toEqual(new List([10, 11]))
+  let expected = new List([new Numeric(10), new Numeric(11)])
+  expect(res).toEqual(expected)
 })
 
 test('lambda', async () => {
@@ -55,5 +57,5 @@ test('def', async () => {
   let forms = readAll(input)
   let res = evalForms(forms)
 
-  expect(res[1]).toEqual(100)
+  expect(res[1].number).toEqual(100)
 })

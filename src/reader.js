@@ -6,7 +6,8 @@
 
 const R = require('ramda')
 const { isWhitespace, isDigit } = require('./type')
-const { List } = require('./immutable.js')
+
+const { List, Numeric, Symbolic } = require('./types')
 
 function readList(chars, c) {
   let items = readDelimitedList(')', chars)
@@ -74,7 +75,8 @@ function readNumber(chars, ch) {
   // in java, this would expand to other
   // number types
   let token = readToken(chars, ch)
-  return parseInt(token)
+  let parsed = parseInt(token)
+  return new Numeric(parsed)
 }
 
 function interpretToken(token) {
@@ -87,7 +89,7 @@ function interpretToken(token) {
     return false
   }
 
-  return token
+  return new Symbolic(token)
 }
 
 function read(chars) {

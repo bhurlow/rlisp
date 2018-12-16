@@ -3,45 +3,28 @@
 
 todo:
 
-- print
+- printing of data readable by reader
+- let 
+- comments
+- strings (immutable)
+- maps
+- sets
+- expose eval to runtime
+- if 
+- macros
+- require local file
 
-- eval env (let, def) 
-
-- CLI to invoke a file
-
-- builtins:
-  - lambda / fn
-  - comments
-  - strings
-  - maps
-  - sets
-  - def
-  - list
-  - head
-  - tail
-  - eval 
-  - join 
-  - +,-,/.* 
-  - if 
-  - =
-  - not
-  - >,<,>=,<=
-  - load
-  - invokable data types
-
-- ideas:
+ideas:
 
   - something like transducers but more sane
   - associative data type?
   - auto reloading of src files from repl?
-  - CLI?
   - docstrings?
-  - immutable js 
   - async/promises built in?
   - js interop?
   - deps from anywhere (github, http) stored exactly once
 
-- projects:
+projects:
 
   - a simple inteface for streams
       - take advantage of async/io, with a functional style 
