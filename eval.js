@@ -17,19 +17,19 @@ function withEnv(env, data) {
 
 // native function implementations
 
-function nativeAdd(...args) {
-  return R.sum(args)
+function nativeAdd(env, ...args) {
+  return withEnv(env, R.sum(args))
 }
 
-function nativeSubtract(...args) {
-  return args.reduce(R.subtract)
+function nativeSubtract(env, ...args) {
+  return withEnv(env, args.reduce(R.subtract))
 }
 
-function nativeMult(...args) {
-  return args.reduce(R.multiply)
+function nativeMult(env, ...args) {
+  return withEnv(env, args.reduce(R.multiply))
 }
 
-function nativeEquals(...args) {
+function nativeEquals(env, ...args) {
   if (args.length > 2) {
     throw new Error('comparison arity > 2 not implemented')
   }
@@ -49,27 +49,31 @@ function nativeEquals(...args) {
   }
 
   // otherwise defer to type equality method
-  return a.equals(b)
+  return withEnv(env, a.equals(b))
 }
 
 // TODO assert listlike
-function nativeFirst(data) {
-  return data.first()
+function nativeFirst(env, data) {
+  return withEnv(env, data.first())
 }
 
 // TODO assert listlike
-function nativeRest(data) {
-  return data.shift()
+function nativeRest(env, data) {
+  return withEnv(env, data.shift())
 }
 
-function putln(...args) {
+function putln(env, ...args) {
   const strs = args.map(String)
   process.stdout.write(...strs)
   process.stdout.write('\n')
-  return '<wrote bytes>'
+  return withEnv(env, '<wrote bytes>')
 }
 
-function fn(...args) {}
+function def(env, ...args) {
+  let [varName, value] = args 
+  let newEnv = env.set(varName, value)
+  return withEnv(newEnv, true)
+}
 
 const tokenToNative = {
   '+': nativeAdd,
@@ -79,7 +83,7 @@ const tokenToNative = {
   first: nativeFirst,
   rest: nativeRest,
   putln: putln,
-  fn: fn
+  def
 }
 
 function unquote(env, data) {
@@ -101,11 +105,12 @@ function evalSexp(env, list) {
       throw new Error(`Unknown Operator: ${operand}`)
     }
 
-    let data = found(...args)
-    return { env, data }
+    return found(env, ...args)
   }
 
   if (isList(operand)) {
+    // TODO
+    // move this out of evalSexp into handler for 'fn' token
     if ('fn' === operand.get(0)) {
       // separate out the fns pargs
       let fnList = operand
@@ -126,7 +131,6 @@ function evalSexp(env, list) {
       argSpec.forEach((arg, idx) => {
         let bindVar = arg
         let bindVal = rest.get(idx)
-        console.log(bindVar, bindVal)
         bindingEnv = bindingEnv.set(bindVar, bindVal)
       })
 
@@ -172,9 +176,11 @@ function evalForm(form) {
 }
 
 function evalForms(forms) {
-  let env = initEnv()
+  let _env = initEnv()
   return forms.map(form => {
-    return _evalForm(env, form).data
+    let { env, data } = _evalForm(_env, form)
+    _env = env
+    return data
   })
 }
 

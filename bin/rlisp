@@ -12,4 +12,3 @@ const input = fs.readFileSync(path).toString()
 const forms = readAll(input)
 
 evalForms(forms)
-
