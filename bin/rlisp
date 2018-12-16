@@ -1,15 +1,15 @@
 #! /usr/bin/env node
 
 const fs = require('fs')
-const { readString } = require('../reader')
-const { evalForm } = require('../eval')
+const { readAll } = require('../reader')
+const { evalForms } = require('../eval')
 
 const args = process.argv.slice(2)
 const [path] = args
 
 const input = fs.readFileSync(path).toString()
 
-const form = readString(input)
+const forms = readAll(input)
 
-evalForm(form)
+evalForms(forms)
 

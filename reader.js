@@ -78,7 +78,6 @@ function readNumber(chars, ch) {
 }
 
 function interpretToken(token) {
-
   // read bool literals
   if (token === 'true') {
     return true
@@ -109,7 +108,7 @@ function read(chars) {
     }
 
     if (`'` === ch) {
-      let quoted = new List(['QUOTE', read(chars) ])
+      let quoted = new List(['QUOTE', read(chars)])
       return quoted
     }
 
@@ -132,7 +131,17 @@ function readString(input) {
   return read(chars)
 }
 
+function readAll(input) {
+  let chars = input.trim().split('')
+  let forms = []
+  while (chars.length) {
+    forms.push(read(chars))
+  }
+  return forms
+}
+
 module.exports = {
   readString,
+  readAll,
   read
 }

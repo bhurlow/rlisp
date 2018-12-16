@@ -171,6 +171,14 @@ function evalForm(form) {
   return res.data
 }
 
+function evalForms(forms) {
+  let env = initEnv()
+  return forms.map(form => {
+    return _evalForm(env, form).data
+  })
+}
+
 module.exports = {
-  evalForm
+  evalForm,
+  evalForms
 }

@@ -11,6 +11,10 @@ todo:
 
 - builtins:
   - lambda / fn
+  - comments
+  - strings
+  - maps
+  - sets
   - def
   - list
   - head
@@ -23,6 +27,7 @@ todo:
   - not
   - >,<,>=,<=
   - load
+  - invokable data types
 
 - ideas:
 

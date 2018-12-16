@@ -1,7 +1,7 @@
 const { List } = require('./immutable.js')
 
 function isWhitespace(ch) {
-  return ch === ' '
+  return ch === ' ' || ch === '\n'
 }
 
 function isDigit(ch) {
