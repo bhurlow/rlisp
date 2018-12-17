@@ -37,17 +37,6 @@ test('rest', async () => {
   expect(res).toEqual(expected)
 })
 
-test('lambda', async () => {
-  const input = `
-    ((fn '(x) (+ x 5)) 6)
-  `
-
-  let form = readString(input)
-  let res = evalForm(form)
-
-  expect(res.number).toEqual(11)
-})
-
 test('def', async () => {
   const input = `
     (def 'foo 99)
@@ -58,4 +47,27 @@ test('def', async () => {
   let res = evalForms(forms)
 
   expect(res[1].number).toEqual(100)
+})
+
+test('lambda (inline)', async () => {
+  const input = `
+    ((fn '(x) (+ x 5)) 6)
+  `
+
+  let form = readString(input)
+  let res = evalForm(form)
+
+  expect(res.number).toEqual(11)
+})
+
+test('lambda (by reference)', async () => {
+  const input = `
+    (def 'myfn (fn '(x) (+ x 5)))
+    (myfn 1)
+  `
+
+  let forms = readAll(input)
+  let res = evalForms(forms)
+
+  expect(res[1].number).toEqual(6)
 })
